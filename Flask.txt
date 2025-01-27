@@ -15,6 +15,27 @@ git remote add origin git@github.com:OlearnDev/Flask.git
 git push -u origin main
 
 
+------- Configurer ou ajouter python dans le path du terminal VS
+
+    - Installer python sur la machine de travail (ici c:\Python)
+    
+    - Aller dans le répertoire de travail et créer un dossier .vscode :
+        cd C:\Cours\Flask\demos
+        mkdir .vscode
+        
+    - Créer le fichier settings.json dans ce dossier avec le contenu :
+      
+      $cat settings.json
+         {
+         "python.pythonPath": "C:\Python"
+         }
+
+    - Ouvrir et Vérifier dans un terminal, par exemple la version de python installée :
+        
+        PS C:\Cours\Flask\demos> python -V
+            Python 3.12.7
+
+
 ------- Créer un env virtuel de travail :
 
 En général :
@@ -161,30 +182,150 @@ Il est 21 h 55 min 1 s.
 
 
 
+---- Créer une route qui va permettre de passer en param la classe de l'élève
+
+- Pour afficher tous les élèves :
+
+from flask import Flask, render_template
+
+app = Flask (__name__)
+
+@app.route("/")
+def hello():
+    return render_template("index.html")
+
+eleve_list = [
+    {'name': 'Dupont', 'prenom': 'Jean', 'class': '2A'},
+    {'name': 'Dupont', 'prenom': 'Jeanne', 'class': 'TG2'},
+    {'name': 'Dupont', 'prenom': 'Jeanne', 'class': 'TG2'},
+    {'name': 'Marchand', 'prenom': 'Marie', 'class': '2A'}, 
+    {'name': 'Martin', 'prenom': 'Adeline', 'class': '1G1'},
+    {'name': 'Dupont', 'prenom': 'Lucas', 'class': '2A'}
+]
+
+@app.route("/eleves")
+def eleves():
+    return render_template("eleve.html", eleves=eleve_list) --> var eleves à exploiter dans le template "eleve.html"
+
+if __name__== '__main__':
+    app.run(debug=True)
+    
+
+- Verifier le resultat dans http://127.0.0.1:5000/eleves
+
+<body>
+    <h1>Liste d'élèves</h1>             
+    {% for eleve in eleves %}           <--- On met les instructions python entre {%%}. Boucle for pour parcourir le dict eleves
+        <p>{{ eleve['name'] }}</p>      <--- On récupère seulement le nom de l'élève. On met dans un parapgraphe pour séaprer les lignes offichées
+    {% endfor %}
+</body>
+
+- Verifier le resultat dans http://127.0.0.1:5000/eleves
+
+    Liste d'élèves
+
+    Dupont
+    Dupont
+    Dupont
+    Marchand
+    Martin
+    Dupont
 
 
+- Pour afficher le résultat sous forme de liste : 
+
+<body>
+    <h1>Liste d'élèves</h1>
+    <ul>
+        {% for eleve in eleves %}
+            <li>{{ eleve['name') }} {{ eleve['prenom') }}, {{ eleve['class'] }}</li>
+        {% endfor %}
+    </ul>
+</body>
+
+- Verifier le resultat dans http://127.0.0.1:5000/eleves
+
+ Liste d'élèves
+    
+    Dupont Jean, 2A
+    Dupont Jeanne, TG2
+    Dupont Jeanne, TG2
+    Marchand Marie, 2A
+    Martin Adeline, 1G1
+    Dupont Lucas, 2A
 
 
+- Pour importer les params passés dans l'url,
+
+    * Au niveau des modules, importer 'request'
+    
+    from flask import Flask, render_template, request
+    
+    * Au niveau de notre fonction 'eleve'
+    
+    @app.route("/eleves")
+    def eleves():
+        classe = request.args['c']                                 <--- request.args est un dic accédé via les clés
+        return render_template("eleve.html", eleves=eleve_list) 
+
+    
+    NB : request.args['c'] renvoie une erreur si la clé n''existe pas ou non indiqué. 
+         Utiliser 'request.args.get('c')' pour éviter ces erreurs
+ 
+
+- Pour filtrer selon la liste entrée dans l'url :
+ 
+    @app.route("/eleves")
+    def eleves():
+        classe = request.args.get('c')
+        eleves_selectionnes = [eleve for eleve in eleve_list if eleve['class'] == classe]
+        #classe = request.args['autre']
+        #print(classe)
+        #return render_template("eleve.html", eleves=eleve_list)
+        return render_template("eleve.html", eleves=eleves_selectionnes) 
 
 
-
-
-
-
-
-
-
-
-
+   ex: http://127.0.0.1:5000/eleves?c=2A
    
+   Liste d'élèves
+    Dupont Jean, 2A
+    Marchand Marie, 2A
+    Dupont Lucas, 2A
+
+- Essayons de modifier pour renvoyer un message s'il n'y a pas d'elèves pour une classée demandée : 
 
 
+    @app.route("/eleves")
+    def eleves():
+        classe = request.args.get('c')
+        if classe:
+            eleves_selectionnes = [eleve for eleve in eleve_list if eleve['class'] == classe]
+        else:
+            eleves_selectionnes = []            
+        return render_template("eleve.html", eleves=eleves_selectionnes) 
     
     
+ Dans le fichier 'eleve.html'  : 
+ 
+    <body>
+        <h1>Liste d'élèves</h1>
+        {% if eleves|length ==0 %}
+            <p>Aucun élève ne correspond à la recherche.</p>
+        {% else %}
+            <ul>
+                {% for eleve in eleves %}
+                <li>{{ eleve['name'] }} {{ eleve['prenom'] }}, {{ eleve['class'] }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </body>
     
     
-    
-    
+  ex: http://127.0.0.1:5000/eleves?c=
+  
+    Liste d'élèves
+
+    Aucun élève ne correspond à la recherche. 
     
     
     
