@@ -15,6 +15,27 @@ git remote add origin git@github.com:OlearnDev/Flask.git
 git push -u origin main
 
 
+------- Configurer ou ajouter python dans le path du terminal VS
+
+    - Installer python sur la machine de travail (ici c:\Python)
+    
+    - Aller dans le répertoire de travail et créer un dossier .vscode :
+        cd C:\Cours\Flask\demos
+        mkdir .vscode
+        
+    - Créer le fichier settings.json dans ce dossier avec le contenu :
+      
+      $cat settings.json
+         {
+         "python.pythonPath": "C:\Python"
+         }
+
+    - Ouvrir et Vérifier dans un terminal, par exemple la version de python installée :
+        
+        PS C:\Cours\Flask\demos> python -V
+            Python 3.12.7
+
+
 ------- Créer un env virtuel de travail :
 
 En général :
