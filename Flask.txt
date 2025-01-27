@@ -1,0 +1,47 @@
+-------- Flask Tuto ---------------------------------------------
+
+https://www.youtube.com/watch?v=Ihp_cG7c2Rk&list=PLV1TsfPiCx8PXHsHeJKvSSC8zfi4Kvcfs&index=1
+
+Flask est un framework : un ens de module python qui permet de concevoir une application web dans le langage python en fournissant 
+des outils et fonctionnalités courantes
+
+--- vi mon_app.py 
+
+from flask import Flask         <--- Import de la classe Flask du module Flask
+
+app = Flask(__name__)             <--- création d'une fonction
+
+@app.route("/")                 <--- permet d'afficher à la racine de notre page web, le résultat de la fonction hello en dessous
+def hello():
+    return "<p>Welcome to my site!</p>"
+
+if __name__== '__main__':       <---  Les 2 lignes suivantes permettent de lancer l'application lorsqu''on va exécuter un script  
+    app.run(debug=True)               avec un terminal
+    
+
+
+EOF  ----------- 
+
+- Ouvrir un terminal et se diriger dans le rep o`est sauvegardé le fichier mon_app.py pour exécuter le code :
+
+    cd C:\Cours\Flask\demos
+
+    PS C:\Cours\Flask\demos> python my_app.py
+
+        * Serving Flask app 'mon_app'
+        * Debug mode: on
+        WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+
+        * Running on http://127.0.0.1:5000
+        Press CTRL+C to quit
+
+        * Restarting with stat
+        * Debugger is active!
+        * Debugger PIN: 544-789-493
+        127.0.0.1 [26/Jan/2025 19:54:46] "GET / HTTP/1.1" 200
+        127.0.0.1 [26/Jan/2025 19:54:47] "GET /favicon.ico HTTP/1.1" 404
+
+- Lancer http://127.0.0.1:5000 dans le navigateur web :
+
+    Welcome to my site!             <--- le message s''affiche sur la page web
+    
