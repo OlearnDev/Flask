@@ -329,4 +329,647 @@ if __name__== '__main__':
     
     
     
+=======
+-------- Flask Tuto ---------------------------------------------
+
+https://www.youtube.com/watch?v=Ihp_cG7c2Rk&list=PLV1TsfPiCx8PXHsHeJKvSSC8zfi4Kvcfs&index=1
+
+Flask est un framework : un ens de module python qui permet de concevoir une application web dans le langage python en fournissant 
+des outils et fonctionnalités courantes
+
+--------- Enreg sur github avec gitbash
+
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin git@github.com:OlearnDev/Flask.git
+git push -u origin main
+
+
+------- Configurer ou ajouter python dans le path du terminal VS
+
+    - Installer python sur la machine de travail (ici c:\Python)
     
+    - Aller dans le répertoire de travail et créer un dossier .vscode :
+        cd C:\Cours\Flask\demos
+        mkdir .vscode
+        
+    - Créer le fichier settings.json dans ce dossier avec le contenu :
+      
+      $cat settings.json
+         {
+         "python.pythonPath": "C:\Python"
+         }
+
+    - Ouvrir et Vérifier dans un terminal, par exemple la version de python installée :
+        
+        PS C:\Cours\Flask\demos> python -V
+            Python 3.12.7
+
+
+------- Créer un env virtuel de travail :
+
+En général :
+
+    python -m venv env              : créer un env nommé env 
+    flask --version                 : voir la version de flask installé
+    pip install flask python-dotenv : pour installer flask et python-dotenv
+    ./env/Scripts/activate			: Pour activer l'env sous windows ou linux. (env) s'affiche en debut de ligne de commande
+    deactivate						: Pour quitter env
+    pip freeze > requirements.txt	: Liste toutes les dépendences installées dans env dans un fichier, facile à importer sur une nouvelle machine
+    pip install -r requirements.txt : pour installer tous les elts dans le fichier
+    python mon_app.py               : Pour executer le code dans le fichier .py
+
+Dans notre cas :
+
+    python -m venv env
+    ./env/Scripts/activate
+    pip install flask python-dotenv
+    
+    (env) PS C:\Cours\Flask\demos\env> flask --version 
+        Python 3.11.9
+        Flask 3.1.0
+        Werkzeug 3.1.3
+
+
+--- vi mon_app.py 
+
+from flask import Flask         <--- Import de la classe Flask du module Flask
+
+app = Flask(__name__)             <--- création d'une fonction
+
+@app.route("/")                 <--- permet d'afficher à la racine de notre page web, le résultat de la fonction hello en dessous
+def hello():
+    return "<p>Welcome to my site!</p>"
+
+if __name__== '__main__':       <---  Les 2 lignes suivantes permettent de lancer l'application lorsqu''on va exécuter un script  
+    app.run(debug=True)               avec un terminal
+    
+
+
+EOF  ----------- 
+
+- Ouvrir un terminal et se diriger dans le rep o`est sauvegardé le fichier mon_app.py pour exécuter le code :
+
+    cd C:\Cours\Flask\demos
+
+    (env) PS C:\Cours\Flask\demos\env> python mon_app.py
+
+        * Serving Flask app 'mon_app'
+        * Debug mode: on
+        WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+
+        * Running on http://127.0.0.1:5000
+        Press CTRL+C to quit
+
+        * Restarting with stat
+        * Debugger is active!
+        * Debugger PIN: 544-789-493
+        127.0.0.1 [26/Jan/2025 19:54:46] "GET / HTTP/1.1" 200
+        127.0.0.1 [26/Jan/2025 19:54:47] "GET /favicon.ico HTTP/1.1" 404
+
+- Lancer http://127.0.0.1:5000 dans le navigateur web :
+
+    Welcome to my site!             <--- le message s''affiche sur la page 
+    
+
+
+- On remarque le message suivant dans le terminal 
+
+    "GET / HTTP/1.1" 200   <--- code 200 indique que la page a été bien trouvée
+    
+    
+- Modifions le code pour inclure un fichier index.html qui sera appelé à la place du paragraphe html dans la fonction hello :
+
+    cd C:\Cours\Flask\demos
+    mkdir templates
+    cd templates
+
+*** --- vi index.html   
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon appli</title>
+</head>
+<body>
+    <p>Welcome to my site!</p>
+</body>
+</html>
+
+--- vi mon_app.py 
+
+from flask import Flask, render_template        <---  import de render_template du module flask
+import datetime
+
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    return render_template("index.html")        <--- appel fichier index.html
+
+@app.route("/heure")                            <--- Ajout d''une route pour lire les heures 
+def heure():
+    date_heure = datetime.datetime.now()
+    h = date_heure.hour
+    m = date_heure.minute
+    s = date_heure.second
+    #print(h, m, s)
+    #return "Heure actuelle"
+    return render_template("heure.html", heure=h, minute=m, seconde=s)
+
+if_name_ -- '__main__':
+    app.run(debug=True)    
+    
+
+
+**-------------- vi index.html -------------
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon appli</title>
+</head>
+<body>
+    <h1>Quelle heure est-il ?</h1>
+    <p>Il est {{ heure }} h {{ minute }} min {{ seconde }} s.</p>
+</body>
+</html>
+
+
+--------- Execution web 
+
+http://http://127.0.0.1:5000/heure
+
+Quelle heure est-il ?
+Il est 21 h 55 min 1 s.
+
+
+
+---- Créer une route qui va permettre de passer en param la classe de l'élève
+
+- Pour afficher tous les élèves :
+
+from flask import Flask, render_template
+
+app = Flask (__name__)
+
+@app.route("/")
+def hello():
+    return render_template("index.html")
+
+eleve_list = [
+    {'name': 'Dupont', 'prenom': 'Jean', 'class': '2A'},
+    {'name': 'Dupont', 'prenom': 'Jeanne', 'class': 'TG2'},
+    {'name': 'Dupont', 'prenom': 'Jeanne', 'class': 'TG2'},
+    {'name': 'Marchand', 'prenom': 'Marie', 'class': '2A'}, 
+    {'name': 'Martin', 'prenom': 'Adeline', 'class': '1G1'},
+    {'name': 'Dupont', 'prenom': 'Lucas', 'class': '2A'}
+]
+
+@app.route("/eleves")
+def eleves():
+    return render_template("eleve.html", eleves=eleve_list) --> var eleves à exploiter dans le template "eleve.html"
+
+if __name__== '__main__':
+    app.run(debug=True)
+    
+
+- Verifier le resultat dans http://127.0.0.1:5000/eleves
+
+<body>
+    <h1>Liste d'élèves</h1>             
+    {% for eleve in eleves %}           <--- On met les instructions python entre {%%}. Boucle for pour parcourir le dict eleves
+        <p>{{ eleve['name'] }}</p>      <--- On récupère seulement le nom de l'élève. On met dans un parapgraphe pour séaprer les lignes offichées
+    {% endfor %}
+</body>
+
+- Verifier le resultat dans http://127.0.0.1:5000/eleves
+
+    Liste d'élèves
+
+    Dupont
+    Dupont
+    Dupont
+    Marchand
+    Martin
+    Dupont
+
+
+- Pour afficher le résultat sous forme de liste : 
+
+<body>
+    <h1>Liste d'élèves</h1>
+    <ul>
+        {% for eleve in eleves %}
+            <li>{{ eleve['name') }} {{ eleve['prenom') }}, {{ eleve['class'] }}</li>
+        {% endfor %}
+    </ul>
+</body>
+
+- Verifier le resultat dans http://127.0.0.1:5000/eleves
+
+ Liste d'élèves
+    
+    Dupont Jean, 2A
+    Dupont Jeanne, TG2
+    Dupont Jeanne, TG2
+    Marchand Marie, 2A
+    Martin Adeline, 1G1
+    Dupont Lucas, 2A
+
+
+- Pour importer les params passés dans l'url,
+
+    * Au niveau des modules, importer 'request'
+    
+    from flask import Flask, render_template, request
+    
+    * Au niveau de notre fonction 'eleve'
+    
+    @app.route("/eleves")
+    def eleves():
+        classe = request.args['c']                                 <--- request.args est un dic accédé via les clés
+        return render_template("eleve.html", eleves=eleve_list) 
+
+    
+    NB : request.args['c'] renvoie une erreur si la clé n''existe pas ou non indiqué. 
+         Utiliser 'request.args.get('c')' pour éviter ces erreurs
+ 
+
+- Pour filtrer selon la liste entrée dans l'url :
+ 
+    @app.route("/eleves")
+    def eleves():
+        classe = request.args.get('c')
+        eleves_selectionnes = [eleve for eleve in eleve_list if eleve['class'] == classe]
+        #classe = request.args['autre']
+        #print(classe)
+        #return render_template("eleve.html", eleves=eleve_list)
+        return render_template("eleve.html", eleves=eleves_selectionnes) 
+
+
+   ex: http://127.0.0.1:5000/eleves?c=2A
+   
+   Liste d'élèves
+    Dupont Jean, 2A
+    Marchand Marie, 2A
+    Dupont Lucas, 2A
+
+- Essayons de modifier pour renvoyer un message s'il n'y a pas d'elèves pour une classée demandée : 
+
+
+    @app.route("/eleves")
+    def eleves():
+        classe = request.args.get('c')
+        if classe:
+            eleves_selectionnes = [eleve for eleve in eleve_list if eleve['class'] == classe]
+        else:
+            eleves_selectionnes = []            
+        return render_template("eleve.html", eleves=eleves_selectionnes) 
+    
+    
+ Dans le fichier 'eleve.html'  : 
+ 
+    <body>
+        <h1>Liste d'élèves</h1>
+        {% if eleves|length ==0 %}
+            <p>Aucun élève ne correspond à la recherche.</p>
+        {% else %}
+            <ul>
+                {% for eleve in eleves %}
+                <li>{{ eleve['name'] }} {{ eleve['prenom'] }}, {{ eleve['class'] }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </body>
+    
+    
+  ex: http://127.0.0.1:5000/eleves?c=
+  
+    Liste d'élèves
+
+    Aucun élève ne correspond à la recherche. 
+    
+    
+    
+    
+---------- Les Formulaires ----------------------------------------
+
+Créons une page login.py avec un template login.html associé :
+
+
+*** ---------- login.py 
+
+from flask import Flask, render_template, request
+
+app = Flask (__name__)
+
+@app.route("/")
+def hello():
+    return render_template("index.html")
+
+
+app = Flask (__name__)
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
+if __name__== '__main__':
+    app.run(debug=True)
+    
+
+
+*** ---------- login.html
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Mon appli</title>
+</head>
+<body>
+	<h1>Page de connexion</h1>
+	<form action="" method="">
+		<p>
+			<!-- champ de type "text" -->
+			<label for="nom">Nom : </label>
+			<input type="text" name="nom" id="nom" required>            <--- required pour obliger la saisie d'un champ
+		</p>
+		<p>
+			<!-- champ de type "Password" -->
+			<label for="mdp">Mot de passe : </label>
+			<input type="password" name="mdp" id="mdp" required>
+		</p>
+		<p>
+			<!-- Bouton d'envoi du formulaire -->
+			<input type="submit" value="Envoyer le formulaire">
+			<!-- <button type="submit">Envoyer le formulaire</button> -->
+		</p>
+	</form>
+</body>
+</html>
+
+
+---------- > Voir le résultat dans : http://127.0.0.1:5000/login
+
+---- exple : formulaire.html
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Mon appli</title>
+</head>
+<body>
+	<h1>Examples of form elements</h1>
+	<form action="" method="">
+		<p>
+			<!-- champ de type "text" -->
+			<label for="nom">Nom : </label>
+			<input type="text" name="nom" id="nom">
+		</p>
+		<p>
+			<!-- champ de type "Password" -->
+			<label for="mdp">Mot de passe : </label>
+			<input type="password" name="mdp" id="mdp">
+		</p>
+		<p>
+			<!-- Champ de type "email" -->
+			<label for="email">Email: </label>
+			<input type="email" name="email" id="email">
+		</p>
+		<p>
+			<!-- champ de type "radio" -->
+			Aimez-vous le chocolat ?
+			<input type="radio" name="choix-chocolat" value=1 id="choix1">
+			<label for="choix1">Non : </label>
+			<input type="radio" name="choix-chocolat" value=2 id="choix2">
+			<label for="choix2">Oui</label>
+		</p>
+		<p>
+			<!-- Choix dans une liste d'options avec la balise <select> -->
+			<label for="moyen-transport">Moyen de transport: </label>
+			<select name="transport" id="moyen-transport">
+				<option value="bus">Bus</option>
+				<option value="voiture">Voiture</option>
+				<option value="velo">Vélo</option>
+				<option value="autre">Autre</option>
+			</select>
+		</p>
+		<p>
+			<!-- Zone de texte plus grande avec la balise <textarea> -->
+			<label for="commentaire">Écrire un commentaire: </label>
+			<textarea name="commentaire" id="commentaire" rows="6" cols="50"></textarea>
+		</p>
+		<p>
+			<!-- Bouton d'envoi du formulaire -->
+			<input type="submit" value="Envoyer le formulaire">
+			<!-- <button type="submit">Envoyer le formulaire</button> -->
+		</p>
+	</form>
+</body>
+</html>
+
+-------------- Route pour formulaire 
+
+@app.route("/enreg")
+def enreg():
+    return render_template("formulaire.html")
+    
+---------- > Voir le résultat dans : http://127.0.0.1:5000/enreg
+
+Dans la définition du formulaire, on a :
+
+<form action="" method="">
+
+- method : Indique ce qu'on fait avec le formulaire. Par défaut, c'est GET si non spécifié ou ""
+- action : Indique l'url où envoyer les données saisie dans le formulaire
+
+----- Création de route pour le traitement de données  
+
+@app.route("/traitement")
+def traitement():
+    return "Traitement de données"          <--- Pas de template, juste une chaîne renvoyée 
+
+
+Modifier le formulaire login: 
+
+    <form action="/traitement" method="GET">
+
+---------- > Voir le résultat dans : http://127.0.0.1:5000/login
+
+    Saisir login et pwd et cliquer sur "Envoyer le formulaire"
+    
+    Traitement de données               <--- affiché sur la page web
+
+
+NB : Dans Flask, il n'est pas recommandé d'indiquer la route dans le formulaire mais plutôt la fonction associée à la route, 
+pour faciliter la maintenance si on change de route :
+
+<form action="{{ url_for('traitement')}}" method="GET">        <--- traitement ici est le nom de la fonction et non la route
+
+
+Limitation : avec "GET", on constate que les infos sont transmises dans l'url de manière lisibles et peuvent être interceptées :
+
+    http://127.0.0.1:5000/traitement?nom=gg&mdp=dd
+
+
+--------- La méthode : POST ------------------
+
+    <form action="/traitement" method="GET">
+
+    - L'url ne contient plus les données transmises : http://127.0.0.1:5000/traitement  . Mais on peut voir les données en inspectant
+      la page web. Il faudrait coupler POST avec un protocle sécurisé de chiffrement tel que https, pas l'objet de ce cours
+
+---------- > Voir le résultat dans : http://127.0.0.1:5000/traitement
+
+    Method Not Allowed
+
+    The method is not allowed for the requested URL.
+
+
+Pour éviter le message "Method Not Allowed", eviter d'utiliser POST avec une route par défaut. 
+Pour que cette route accepte POST, il faut l'indiquer comme méthode dans la route :
+
+@app.route("/traitement", methods=["POST"])
+def traitement():
+    return "Traitement de données" 
+
+
+---------- > Voir le résultat dans : http://127.0.0.1:5000/login
+
+Traitement de données
+
+
+NB : La ligne : Print(request.args)  ---> ramène une ligne vide avec POST, dans le terminal. Utiliser plutôt request.form :
+
+@app.route("/traitement", methods=["POST"])
+def traitement():
+    donnees = request.form                      <---- un dict
+    #print(donnees)
+    nom = donnees.get('name')
+    prenom = donnees.get('prenom')
+    print(name, prenom)
+    return "Traitement de données"
+
+---------- > Si on saisit un login et pwd , on voit dans la console : 
+
+ImmutableMultiDict([('nom', 'toto'), ('mdp', 'monpass')])
+127.0.0.1  [28/Jan/2025 18:34:34] "GET /traitement?nom=toto&mdp=monpass HTTP/1.1" 200
+
+
+- Instruction If : pour autoriser seulement le user "admin" à se connecter :
+
+@app.route("/traitement", methods=["POST"])
+def traitement():
+    donnees = request.form                      
+    #print(donnees)
+    nom = donnees.get('name')
+    prenom = donnees.get('prenom')
+    if name == 'admin' and mdp == '1234':
+        return f"Bonjour {name}, vous êtes connecté !"
+    else:
+        return "Un problème est survenu."
+
+- Essayons de modifier pour ramener plutôt un template :
+
+@app.route("/traitement", methods=["POST"])
+def traitement():
+    donnees = request.form                      
+    nom = donnees.get('nom')
+    mdp = donnees.get('mdp')
+    if nom == 'admin' and mdp == '1234':
+        return render_template("traitement.html", nom_utilisateur = nom)
+    else:
+        return render_template("traitement.html")
+
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon appli</title>
+</head>
+<body>
+    {% if nom_utilisateur %}
+        <p>Bonjour {{ nom_utilisateur }}, vous êtes connecté.</p>
+    {% else %}
+        <p>Un problème est survenu.</p> 
+    {% endif %}
+</body>
+</html>
+
+----------- Amélioration du code pour ajouter : GET
+
+On veut modifier le code pour :
+    1. Permettre de gérer une page web au cas où l'utilisateur entrait directement la route "traitement"
+    2. Dans ce cas, il faut une condition if pour vérifier la méthode entrée 
+
+
+from flask import Flask, render_template, redirect, url_for     <--- Import de 2 fonctions : redirect, url_for
+
+@app.route("/traitement", methods=["POST", "GET"])
+def traitement():
+    if request.method == "POST":
+        donnees = request.form                      
+        nom = donnees.get('nom')
+        mdp = donnees.get('mdp')
+        if nom == 'admin' and mdp == '1234':
+            return render_template("traitement.html", nom_utilisateur = nom)
+        else:
+            return render_template("traitement.html")
+    else:
+        return redirect(url_for('hello'))               <--- 'hello' est la fonction de la route / pour ramener à l'accueil
+
+
+
+- Ajoutons un lien pour revenir à la page de connexion sur la page d'accueil (index.html) :
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon appli</title>
+</head>
+<body>
+    <p>Bienvenue sur mon site site!</p>
+    <a href = {{ url_for('login') }}>Se connecter</a>
+</body>
+</html>
+
+--------> http://127.0.0.1:5000/
+
+Bienvenue sur mon site site!
+
+Se connecter
+
+
+
+
+
+
+
+
+
+
+
+
