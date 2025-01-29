@@ -498,7 +498,7 @@ Limitation : avec "GET", on constate que les infos sont transmises dans l'url de
 
 --------- La méthode : POST ------------------
 
-    <form action="/traitement" method="GET">
+    <form action="/traitement" method="POST">
 
     - L'url ne contient plus les données transmises : http://127.0.0.1:5000/traitement  . Mais on peut voir les données en inspectant
       la page web. Il faudrait coupler POST avec un protocle sécurisé de chiffrement tel que https, pas l'objet de ce cours
@@ -523,8 +523,12 @@ def traitement():
 Traitement de données
 
 
-NB : La ligne : Print(request.args)  ---> ramène une ligne vide avec POST, dans le terminal. Utiliser plutôt request.form :
-
+NB : - La ligne : Print(request.args)  ---> ramène une ligne vide avec POST, dans le terminal. Utiliser plutôt request.form :
+     - Pour lire les données 
+        avec GET  : request.args
+        avec POST : request.form
+     
+     
 @app.route("/traitement", methods=["POST"])
 def traitement():
     donnees = request.form                      <---- un dict
@@ -629,6 +633,22 @@ def traitement():
 Bienvenue sur mon site site!
 
 Se connecter
+
+
+
+========== Chap.4 : Fichiers statiques & héritage de templates ==========================================
+
+Fichiers statiques (ex : .css, .js, images)
+Héritage de templates : utiliser le même code pour plusieurs pages
+
+
+
+
+================ Sites utiles 
+
+1. Coder et héberger un site web de A à Z avec Python et Flask              : https://www.youtube.com/watch?v=AYmcV3b7lWQ
+2. Python Website Full Tutorial - Flask, Authentication, Databases & More   : https://www.youtube.com/watch?v=dam0GPOAvVI&t=7578s
+3.Web Development with Python Tutorial – Flask & Dynamic Database-Driven Web Apps : https://www.youtube.com/watch?v=yBDHkveJUf4
 
 
 
