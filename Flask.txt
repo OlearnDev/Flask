@@ -40,14 +40,14 @@ git push -u origin main
 
 En général :
 
-    python -m venv env              : créer un env nommé env 
-    flask --version                 : voir la version de flask installé
-    pip install flask python-dotenv : pour installer flask et python-dotenv
-    ./env/Scripts/activate			: Pour activer l'env sous windows ou linux. (env) s'affiche en debut de ligne de commande
-    deactivate						: Pour quitter env
-    pip freeze > requirements.txt	: Liste toutes les dépendences installées dans env dans un fichier, facile à importer sur une nouvelle machine
-    pip install -r requirements.txt : pour installer tous les elts dans le fichier
-    python mon_app.py               : Pour executer le code dans le fichier .py
+    $python -m venv env              : créer un env nommé env 
+    $flask --version                 : voir la version de flask installé
+    $pip install flask python-dotenv : pour installer flask et python-dotenv
+    $./env/Scripts/activate			: Pour activer l'env sous windows ou linux. (env) s'affiche en debut de ligne de commande
+    $deactivate						: Pour quitter env
+    $pip freeze > requirements.txt	: Liste toutes les dépendences installées dans env dans un fichier, facile à importer sur une nouvelle machine
+    $pip install -r requirements.txt : pour installer tous les elts dans le fichier
+    $python mon_app.py               : Pour executer le code dans le fichier .py
 
 Dans notre cas :
 

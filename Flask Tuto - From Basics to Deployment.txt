@@ -1,0 +1,50 @@
+-------- Flask Tuto - From Basics to Deployment ----------------
+
+https://www.youtube.com/watch?v=oQ5UfJqW5Jo
+
+
+---- Create a virtual environment in our workspace called : .venv
+
+Interpreter :
+
+You can python interpreter using left menu : Manage --> Command Palette --> in search bar type: "Python: Select interpreter".
+    You can select python[3].exe for anaconda if installed or another python[3].exe 
+
+Using terminal : 
+
+    cd C:\Cours\Flask\Full
+    > python -m venv .venv          --> Check folder .venv created under "Full" folder
+    > cd C:\Cours\Flask\Full\.venv\Scripts
+    >./activate
+(.venv) PS C:\Cours\Flask\Full\.venv\Scripts> flask --version 
+    Python 3.11.9
+    Flask 3.0.3
+    Werkzeug 3.0.4
+
+(.venv) PS ..> pip[3] freeze                --> To get the list of packages installed if any
+(.venv) PS ..>pip3 install flask            --> Install everything needed for basic flask application in the env
+
+(.venv) PS ..> pip3 freeze       
+    blinker==1.9.0
+    click==8.1.8
+    colorama==0.4.6
+    Flask==3.1.0
+    itsdangerous==2.2.0
+    Jinja2==3.1.5
+    MarkupSafe==3.0.2
+    Werkzeug==3.1.3
+    
+------- Create file app.py ----------
+    
+from flask import Flask
+
+app = Flask (__name__)
+
+@app.route('/')
+
+def index():
+return "Hello World"
+
+if __name__ == '__main__':                  --> Si l'application est la page main, lancer app.run en mode debug=true pour permettre
+app.run(host='0.0.0.0', debug=True)             de debugger les erreurs en dev, host=[127.0.0.1 ou ipmachine ou 0.0.0.0]. 
+                                                On peut specifir un port sinon ce sera le port par défaut 
