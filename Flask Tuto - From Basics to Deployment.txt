@@ -33,7 +33,8 @@ Using terminal :
     Jinja2==3.1.5
     MarkupSafe==3.0.2
     Werkzeug==3.1.3
-    
+
+
 ------- Create file app.py ----------
     
 from flask import Flask
@@ -41,10 +42,266 @@ from flask import Flask
 app = Flask (__name__)
 
 @app.route('/')
-
 def index():
-return "Hello World"
+    return "Hello World"
 
-if __name__ == '__main__':                  --> Si l'application est la page main, lancer app.run en mode debug=true pour permettre
-app.run(host='0.0.0.0', debug=True)             de debugger les erreurs en dev, host=[127.0.0.1 ou ipmachine ou 0.0.0.0]. 
-                                                On peut specifir un port sinon ce sera le port par défaut 
+@app.route('/hello')
+def hello():
+    return "Hello World"
+    
+    
+if __name__ == '__main__':                  --> if application uses main page, app.run will run with different options :
+   app.run(host='0.0.0.0', debug=True)          debug=true : in dev mode, to not restart server but refresh to update automatically changes
+                                                host=[127.0.0.1 (local ip) or ip_machine or 0.0.0.0 (for localhost and private local ip @)]. 
+                                                port=xxxx : We can specify a port. If not, it will be default port 5000
+
+
+    (.venv) PS ..>pip3 freeze > requirements.txt : Lists dependences installed in env in a file, easy to import in github and people can install all these depences using :
+    (.venv) PS ..>pip3 install -r requirements.txt : installs of packages in another env
+    
+------- Create a dynamique route 
+
+@app.route('/greet/<name>')
+def greet(name):
+    return f"Hello {name}"
+
+            ------------------
+            
+@app.route('/add/<int:number1>/<int:number2>')
+def add(number1, number2):
+    return f'{number1} + {number2} = {number1 + number2}'
+
+    ---> http://127.0.0.1:5000/add/10/20
+    
+        10 + 20 = 30
+        
+            ------------------
+            
+@app.route('/handle_url_params')
+def handle_params():
+    if 'greeting' in request.args.keys() and 'name' in request.args.keys():     <-- add request in modules imported
+        greeting = request.args['greeting']
+        name = request.args.get('name')
+        return f'{greeting}, {name}'
+    else:
+        return 'Some parameters are missing'
+
+    ---> http://127.0.0.1:5000//handle_url_params?name=Toto&greeting=Bonjour
+
+        Bonjour, Toto
+        
+    ---> http://127.0.0.1:5000//handle_url_params?name=Toto   
+
+        Some parameters are missing
+
+Methods            ----------------------- 
+            
+    > curl http://127.0.0.1:5000/               --> Sends a simple GET request
+    > curl -X POST http://127.0.0.1:5000/       --> Sends a POST request specified with option -X
+    > curl -I http://127.0.0.1:5000/            --> To get the response header
+
+To allow POST method, specify it in the route definition like :
+
+@app.route('/hello', methods=['POST','GET'])
+
+4 main methods :
+
+    GET     : Get or Read data
+    POST    : Add or Create data
+    PUT     : Update data
+    DELETE  : Delete data
+
+------ If we want to manage response :
+
+@app.route('/reponse')
+def reponse():
+    response = make_response('Hello World \n')                          <--- Import 'make_response'
+    response.status_code = 202
+    response.headers['content-type'] = 'application/octet-stream'
+    return response
+
+
+------------- HTML and TEMPLATES --------------------
+
+
+Create an index.html file : -------------------------
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flask App</title>
+</head>
+<body>
+    <h1>Hello World</h1>
+    <p>{{myvalue}}</p>
+    <p>{{myresult}}</p>
+</body>
+</html>
+
+
+Create a demohtml.html file : -------------------------
+
+from flask import Flask, render_template
+
+app = Flask(__name__, template_folder='templates')
+
+@app.route('/')
+def index():
+    myvalue = 'Resultat'
+    myresult = 10 + 20
+    return render_template('index.html', myvalue = myvalue, myresult = myresult )
+
+ 
+if __name__ == '__main__':                  
+    app.run(host='0.0.0.0', debug=True)
+    
+ 
+    --->  http://127.0.0.1:5000/
+    
+    Hello World
+    Resultat
+    30
+
+                -------------------------------
+                
+                
+<body>
+    <h1>Hello World</h1>
+    <ul>
+        {% for item in mylist %}
+            <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
+    
+    <p>{{ mylist }}</p>
+</body>
+
+
+@app.route('/')
+def index():
+    mylist= [10, 20, 30, 40, 50]
+    return render_template('index.html', mylist=mylist)
+
+    
+    --->  http://127.0.0.1:5000/
+    
+    
+    Hello World
+
+    • 10
+    • 20
+    • 30
+    • 40
+    • 50
+
+    [10, 20, 30, 40, 50]
+    
+
+---------------- Color in red for value = 30
+
+<body>
+    <h1>Hello World</h1>
+    <ul>
+        {% for item in mylist %}
+            {% if item == 30 %}
+                <li style="color: red">{{ item }}</li>
+            {% else %}
+                <li>{{ item }}</li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+    <p>{{ mylist }}</p>   
+</body>   
+    
+
+We can simplify the above like below :
+
+    <ul>
+        {% for item in mylist %}
+            <li {% if item == 30 %}style="color: red" {% endif %}>{{ item }}</li>
+        {% endfor %} I
+    </ul>  
+    
+
+----------------- Inherit Template ------------------------------
+
+We create a base teamplate called 'base.html' with content below which should be the same on all html files. 
+We make the title dynamic using : {% block title %}{% endblock %} with a default value if not filled :
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Default Value{% endblock %}</title>
+</head>
+<body>
+    <p>This will always be here.</p>
+    {% block content %}{% endblock %}
+</body>
+</html>   
+    
+        ---- The index.html will become :
+
+{% extends "base.html" %}
+{% block title %} Index Page{% endblock %}
+
+{% block content %}
+    {% for item in mylist %}
+        {% if item == 30 %}
+            <li style="color: red">{{ item }}</li>
+        {% else %}
+            <li>{{ item }}</li>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+------------------- Filtering --------------------
+
+---- Create filters.html file :
+
+{% extends "base.html" %}
+{% block title %}Filter Page{% endblock %}
+
+{% block content %}
+    <h1>Filters</h1>
+    <p>{{ some_text }}</p>
+    <p>{{ some_text|upper }}</p>            <--- upper filter applied
+    <p>{{ some_text|lower }}</p>            <--- lower filter applied
+    <p>{{ some_text|upper }}</p>
+    <p>{{ some_text|title }}</p>
+    <p>{{ some_text|replace('l', 'L') }}</p>
+{% endblock %} 
+    
+
+@app.route('/filters')
+def filters():
+    sometext = 'Text to filter'
+    return render_template('filters.html', some_text=sometext )
+
+
+-----> http://127.0.0.1:5000/filters
+    
+    This will always be here.
+
+    Filters
+
+    Text to filter
+    TEXT TO FILTER              
+    text to filter
+    Text To Filter
+    Text to fiLter
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
