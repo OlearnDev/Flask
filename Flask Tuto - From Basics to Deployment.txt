@@ -292,16 +292,161 @@ def filters():
     Text To Filter
     Text to fiLter
     
-   
+We can create our custom filter called reverse string :
+
+@app.te('reverse_string')
+def reverse_string(s):
+    return s[::-1]
+
+
+{% block content %}
+    ...
+    <p>{{ some_text|reverse_string }}</p>
+{% endblock %}
+
+
+-----> http://127.0.0.1:5000/filters   
+retlif ot txeT
     
+@app.template_filter('repeat')
+def repeat(s, times=2):
+    return s * times
     
+-----> http://127.0.0.1:5000/filters  
+    Text to filterText to filterText to filterText to filterText to filter
     
+-----> http://127.0.0.1:5000/filters  
+    TeXt tO FiLtEr    
     
+
+-- Redirect to a route :
+
+In the index.html , we add a link to 'Others' :
+
+{% extends "base.html" %}
+{% block title %} Index Page{% endblock %}
+
+{% block content %}
+    {% for item in mylist %}
+        {% if item == 30 %}
+            <li style="color: red">{{ item }}</li>
+        {% else %}
+            <li>{{ item }}</li>
+        {% endif %}
+    {% endfor %}
     
+    <a href="{{ url_for('filters') }}">Check filters</a>
+{% endblock %}
+
+
+And we add a route : 
+
+import ...., redirect, url_for
+
+@app.route('/redirect_endpoint')
+def redirect_endpoint():
+    return redirect(url_for('filters'))
+
+-----> http://127.0.0.1:5000/redirect_endpoint
     
+    It redirects to : http://127.0.0.1:5000/
+
+    This will always be here.
+
+    10
+    20
+    30
+    40
+    50
+    Check filters 
     
-    
-    
-    
+    And if we click on 'Check filters', it shows the content of : http://127.0.0.1:5000/filters
+
+
+------------ Forms ----------------
+
+We create 'forms.py' file : --------------
+
+from flask import Flask, render_template, request
+
+app Flask(__name__, template_folder='templates')
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'GET':
+        return render_template('index.html')
+        elif request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        if username == 'neuralnine' and password =='password':
+            return 'Success'
+        else:
+            return 'Failure'
+
+
+if __name__ == '__main__':
+app.run(host='0.0.0.0', debug=True)
+
+We create 'forms.py' file : --------------
+
+{% block content %}
+<h1>Hello World</h1>
+    <form method="POST" action="{{ url_for('index') }}">
+        <input type="text" name="username" placeholder="Username"><br>
+        <input type="password" name="password" placeholder="Password"><br>
+        <input type="submit" value="Login">
+    </form>
+{% endblock %}
+
+
+-----> http://127.0.0.1:5000/ 
+
+    < see zone texts to enter :username and password and submit button> 
+
+
+--------- Upload a file 
+
+{% block content %}
+<h1>Hello World</h1>
+    <form method="POST" action="{{ url_for('index') }}">
+        <input type="text" name="username" placeholder="Username"><br>
+        <input type="password" name="password" placeholder="Password"><br>
+        <input type="submit" value="Login">
+    </form>
+
+
+    <h1>File Upload</h1>
+    <form method="POST" action="{{ url_for('file_upload') }}" enctype="multipart/form-data">    
+        <input type="file" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/plain" required=required>
+        <input type="submit" value="Upload file">
+    </form>
+
+{% endblock %}
+
+-----> http://127.0.0.1:5000/ 
+
+    < see upload file zones>
+
+---------- Working with files
+
+Install panda package using terminal :
+
+> pip3 install panda
+
+In forms.py :
+
+import panda as pd
+
+
+
+
+
+
+
+
+
+
+
 
 
