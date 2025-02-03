@@ -428,15 +428,146 @@ We create 'forms.py' file : --------------
 
     < see upload file zones>
 
----------- Working with files
+---------- Working with files : 
 
-Install panda package using terminal :
+We will display the content of an excel file in html format
 
-> pip3 install panda
+*** Install panda package using terminal :
 
-In forms.py :
+    > pip3 install pandas
+    > pip3 install openpyxl         <---- Install this package which can be a dependency while using panda
 
-import panda as pd
+*** In forms.py :
+
+import pandas as pd
+
+@app.route('/file_upload', methods=['POST'])
+def file_upload():
+    file = request.files['file']
+    if file.content_type == 'text/plain':
+        return file.read().decode()
+    elif file.content_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' or file == 'application/vnd.ms-excel':
+        df = pd.read_excel(file)
+        return df.to_html()
+
+
+-- Case 1:a text file called "Student.txt" with content : 
+Name	Grade
+Jean-Lys	10
+Marie	6
+
+Upload file via  http://127.0.0.1:5000/  :
+
+-> Name Grade Jean-Lys 10 Marie 6
+
+
+-- Case 2 : Create an excel file called "Student.xlsx" with content :
+
+    Name	    Grade
+    Jean-Lys	10
+    Marie	    6
+
+Upload file via  http://127.0.0.1:5000/  :
+    
+        Name	   Grade
+    ------------------    
+    0 ¦	Jean-Lys ¦ 10
+    -------------------
+    1 ¦	Marie	 ¦ 6  
+    -------------------
+
+
+-- Case 3 : Convert an excel file in csv file 
+
+import Response
+
+@app.route('/convert_csv', methods=['POST'])
+def convert_csv():
+    file = request.files['file']
+    df = pd.read_excel(file)
+    response = Response (
+        df.to_csv(),
+        mimetype='text/csv',
+        headers={'Content-Disposition': 'attachment; filename=result.csv'}
+          )
+
+    return response
+
+*** In index file, we add following lines in block content :
+
+{% block content %}
+...
+
+    <h1>Convert to CSV</h1>
+    <form method="POST" action="{{ url_for('convert_csv') }}" enctype="multipart/form-data">    
+        <input type="file" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required=required>
+        <input type="submit" value="Convert file">
+    </form>
+
+{% endblock %}
+
+
+---> Upload file via  http://127.0.0.1:5000/ and click "Convert File"
+     
+     --> Check csv file created in downloads folder
+
+--- Case 4 : 
+
+ 1. We will add another section "Convert to CSV 2" in index page to download an excel file
+ 2. When we click on "Convert file", it will convert and download the file in created folder called "downloads" in local dir,
+    with a unique generated name with uuid (check left panned to see folder created). It then redirects to "download.html" page
+ 3. In downlad page, the file downloaded is renamed as "result.csv"
+ 
+Create a section to upload and an excel file from index.html page 
+
+
+    {% block content %}
+    ...
+    <h1>Convert to CSV 2</h1>
+        <form method="POST" action="{{ url_for('convert_csv_two') }}" enctype="multipart/form-data">    
+            <input type="file" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required=required>
+            <input type="submit" value="Convert file">
+        </form>
+    {% endblock %}
+
+
+In forms.py : Create a route "convert_csv_two" to convert excel to csv and pass the filename to download page  
+
+    import os
+    import uuid
+
+    @app.route('/convert_csv_two', methods=['POST'])
+    def convert_csv_two():
+        file = request.files['file']
+        
+        df = pd.read_excel(file)
+        
+        if not os.path.exists('downloads'):
+            os.makedirs('downloads')
+            filename = f'{uuid.uuid4()}.csv'
+            df.to_csv(os.path.join('downloads', filename))
+
+        return render_template('download.html', filename=filename)
+        
+
+We have to create another route for download the convert file. We import 'send_from_directory' from flask:
+
+    from flask import send_from_directory
+
+    @app.route('/download/<filename>')
+    def download (filename):
+        return send_from_directory('downloads', filename, download_name='result.csv')
+        
+
+Create a file called "download.html" :-----------
+
+    {% extends "base.html" %}
+    {% block title %} Index Page{% endblock %}
+
+    {% block content %}
+    <h1>Download</h1>
+        <a href="{{ url_for('download', filename=filename) }}">Download File</a>
+    {% endblock %}
 
 
 
@@ -450,3 +581,10 @@ import panda as pd
 
 
 
+
+
+
+
+
+
+Check also from same author : https://www.youtube.com/watch?v=o3bCVqF9gI0&list=PL7yh-TELLS1EyAye_UMnlsTGKxg8uatkM

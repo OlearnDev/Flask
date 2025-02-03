@@ -1,0 +1,3 @@
+Name	Grade
+Jean-Lys	10
+Marie	6
