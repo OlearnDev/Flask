@@ -2,8 +2,8 @@
 
 https://www.youtube.com/watch?v=Ihp_cG7c2Rk&list=PLV1TsfPiCx8PXHsHeJKvSSC8zfi4Kvcfs&index=1
 
-Flask est un framework : un ens de module python qui permet de concevoir une application web dans le langage python en fournissant 
-des outils et fonctionnalités courantes
+Flask est un framework : un ens de module python qui permet de concevoir une application web dans le langage python en 
+fournissant des outils et fonctionnalités courantes
 
 --------- Enreg sur github avec gitbash
 
@@ -23,7 +23,7 @@ git push -u origin main
         cd C:\Cours\Flask\demos
         mkdir .vscode
         
-    - Créer le fichier settings.json dans ce dossier avec le contenu :
+    - Créer le fichier "settings.json" dans ce dossier avec le contenu :
       
       $cat settings.json
          {
@@ -32,8 +32,9 @@ git push -u origin main
 
     - Ouvrir et Vérifier dans un terminal, par exemple la version de python installée :
         
-        PS C:\Cours\Flask\demos> python -V
-            Python 3.12.7
+        C:\Cours\Flask\demos> python -V
+           
+		   Python 3.12.7
 
 
 ------- Créer un env virtuel de travail :
@@ -43,9 +44,9 @@ En général :
     $python -m venv env              : créer un env nommé env 
     $flask --version                 : voir la version de flask installé
     $pip install flask python-dotenv : pour installer flask et python-dotenv
-    $./env/Scripts/activate			: Pour activer l'env sous windows ou linux. (env) s'affiche en debut de ligne de commande
-    $deactivate						: Pour quitter env
-    $pip freeze > requirements.txt	: Liste toutes les dépendences installées dans env dans un fichier, facile à importer sur une nouvelle machine
+    $./env/Scripts/activate			 : Pour activer l'env sous windows ou linux. (env) s'affiche en debut de ligne de commande
+    $deactivate						 : Pour quitter env
+    $pip freeze > requirements.txt	 : Liste toutes les dépendences installées dans env dans un fichier, facile à importer sur une nouvelle machine
     $pip install -r requirements.txt : pour installer tous les elts dans le fichier
     $python mon_app.py               : Pour executer le code dans le fichier .py
 
@@ -65,7 +66,7 @@ Dans notre cas :
 
 from flask import Flask         <--- Import de la classe Flask du module Flask
 
-app = Flask(__name__)             <--- création d'une fonction
+app = Flask(__name__)           <--- création d'une fonction
 
 @app.route("/")                 <--- permet d'afficher à la racine de notre page web, le résultat de la fonction hello en dessous
 def hello():
@@ -78,7 +79,7 @@ if __name__== '__main__':       <---  Les 2 lignes suivantes permettent de lance
 
 EOF  ----------- 
 
-- Ouvrir un terminal et se diriger dans le rep o`est sauvegardé le fichier mon_app.py pour exécuter le code :
+- Ouvrir un terminal et se diriger dans le rep où est sauvegardé le fichier mon_app.py pour exécuter le code :
 
     cd C:\Cours\Flask\demos
 
@@ -151,7 +152,7 @@ def heure():
     #return "Heure actuelle"
     return render_template("heure.html", heure=h, minute=m, seconde=s)
 
-if_name_ -- '__main__':
+if __name__== '__main__': 
     app.run(debug=True)    
     
 
@@ -214,7 +215,7 @@ if __name__== '__main__':
 - Verifier le resultat dans http://127.0.0.1:5000/eleves
 
 <body>
-    <h1>Liste d'élèves</h1>             
+    <h1>Liste d''élèves</h1>             
     {% for eleve in eleves %}           <--- On met les instructions python entre {%%}. Boucle for pour parcourir le dict eleves
         <p>{{ eleve['name'] }}</p>      <--- On récupère seulement le nom de l'élève. On met dans un parapgraphe pour séaprer les lignes offichées
     {% endfor %}
@@ -222,7 +223,7 @@ if __name__== '__main__':
 
 - Verifier le resultat dans http://127.0.0.1:5000/eleves
 
-    Liste d'élèves
+    Liste d''élèves
 
     Dupont
     Dupont
@@ -235,17 +236,17 @@ if __name__== '__main__':
 - Pour afficher le résultat sous forme de liste : 
 
 <body>
-    <h1>Liste d'élèves</h1>
+    <h1>Liste d''élèves</h1>
     <ul>
         {% for eleve in eleves %}
-            <li>{{ eleve['name') }} {{ eleve['prenom') }}, {{ eleve['class'] }}</li>
+            <li>{{ eleve['name'] }} {{ eleve['prenom'] }}, {{ eleve['class'] }}</li>
         {% endfor %}
     </ul>
 </body>
 
 - Verifier le resultat dans http://127.0.0.1:5000/eleves
 
- Liste d'élèves
+ Liste d''élèves
     
     Dupont Jean, 2A
     Dupont Jeanne, TG2
@@ -255,7 +256,7 @@ if __name__== '__main__':
     Dupont Lucas, 2A
 
 
-- Pour importer les params passés dans l'url,
+- Pour importer les params passés dans l''url,
 
     * Au niveau des modules, importer 'request'
     
@@ -265,15 +266,15 @@ if __name__== '__main__':
     
     @app.route("/eleves")
     def eleves():
-        classe = request.args['c']                                 <--- request.args est un dic accédé via les clés
-        return render_template("eleve.html", eleves=eleve_list) 
+        classe = request.args['c']                                 <--- request.args est un dic accédé via les clés        
+		return render_template("eleve.html", eleves=eleve_list) 
 
     
     NB : request.args['c'] renvoie une erreur si la clé n''existe pas ou non indiqué. 
          Utiliser 'request.args.get('c')' pour éviter ces erreurs
  
 
-- Pour filtrer selon la liste entrée dans l'url :
+- Pour filtrer selon la liste entrée dans l''url :
  
     @app.route("/eleves")
     def eleves():
@@ -287,12 +288,12 @@ if __name__== '__main__':
 
    ex: http://127.0.0.1:5000/eleves?c=2A
    
-   Liste d'élèves
+   Liste d''élèves
     Dupont Jean, 2A
     Marchand Marie, 2A
     Dupont Lucas, 2A
 
-- Essayons de modifier pour renvoyer un message s'il n'y a pas d'elèves pour une classée demandée : 
+- Essayons de modifier pour renvoyer un message s'il n'y a pas d''elèves pour une classée demandée : 
 
 
     @app.route("/eleves")
@@ -308,7 +309,7 @@ if __name__== '__main__':
  Dans le fichier 'eleve.html'  : 
  
     <body>
-        <h1>Liste d'élèves</h1>
+        <h1>Liste d''élèves</h1>
         {% if eleves|length ==0 %}
             <p>Aucun élève ne correspond à la recherche.</p>
         {% else %}
@@ -323,7 +324,7 @@ if __name__== '__main__':
     
   ex: http://127.0.0.1:5000/eleves?c=
   
-    Liste d'élèves
+    Liste d''élèves
 
     Aucun élève ne correspond à la recherche. 
     
