@@ -465,8 +465,8 @@ Dans la définition du formulaire, on a :
 
 <form action="" method="">
 
-- method : Indique ce qu'on fait avec le formulaire. Par défaut, c'est GET si non spécifié ou ""
-- action : Indique l'url où envoyer les données saisie dans le formulaire
+- method : Indique ce qu''on fait avec le formulaire. Par défaut, c''est GET si non spécifié ou ""
+- action : Indique l''url où envoyer les données saisie dans le formulaire
 
 ----- Création de route pour le traitement de données  
 
@@ -492,7 +492,7 @@ pour faciliter la maintenance si on change de route :
 <form action="{{ url_for('traitement')}}" method="GET">        <--- traitement ici est le nom de la fonction et non la route
 
 
-Limitation : avec "GET", on constate que les infos sont transmises dans l'url de manière lisibles et peuvent être interceptées :
+Limitation : avec "GET", on constate que les infos sont transmises dans l''url de manière lisibles et peuvent être interceptées :
 
     http://127.0.0.1:5000/traitement?nom=gg&mdp=dd
 
@@ -501,8 +501,9 @@ Limitation : avec "GET", on constate que les infos sont transmises dans l'url de
 
     <form action="/traitement" method="POST">
 
-    - L'url ne contient plus les données transmises : http://127.0.0.1:5000/traitement  . Mais on peut voir les données en inspectant
-      la page web. Il faudrait coupler POST avec un protocle sécurisé de chiffrement tel que https, pas l'objet de ce cours
+    - L''url ne contient plus les données transmises : http://127.0.0.1:5000/traitement  . Mais on peut voir les données en 
+	  inspectant la page web. Il faudrait coupler POST avec un protocole sécurisé de chiffrement tel que https, pas l''objet 
+	  de ce cours
 
 ---------- > Voir le résultat dans : http://127.0.0.1:5000/traitement
 
@@ -592,7 +593,7 @@ def traitement():
 ----------- Amélioration du code pour ajouter : GET
 
 On veut modifier le code pour :
-    1. Permettre de gérer une page web au cas où l'utilisateur entrait directement la route "traitement"
+    1. Permettre de gérer une page web au cas où l''utilisateur entrait directement la route "traitement"
     2. Dans ce cas, il faut une condition if pour vérifier la méthode entrée 
 
 
@@ -613,7 +614,7 @@ def traitement():
 
 
 
-- Ajoutons un lien pour revenir à la page de connexion sur la page d'accueil (index.html) :
+- Ajoutons un lien pour aller à la page de connexion sur la page d''accueil (index.html) :
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -647,8 +648,8 @@ Héritage de templates : utiliser le même code pour plusieurs pages
 
 ================ Sites utiles 
 
-1. Coder et héberger un site web de A à Z avec Python et Flask              : https://www.youtube.com/watch?v=AYmcV3b7lWQ
-2. Python Website Full Tutorial - Flask, Authentication, Databases & More   : https://www.youtube.com/watch?v=dam0GPOAvVI&t=7578s
+1.Coder et héberger un site web de A à Z avec Python et Flask              : https://www.youtube.com/watch?v=AYmcV3b7lWQ
+2.Python Website Full Tutorial - Flask, Authentication, Databases & More   : https://www.youtube.com/watch?v=dam0GPOAvVI&t=7578s
 3.Web Development with Python Tutorial – Flask & Dynamic Database-Driven Web Apps : https://www.youtube.com/watch?v=yBDHkveJUf4
 
 
